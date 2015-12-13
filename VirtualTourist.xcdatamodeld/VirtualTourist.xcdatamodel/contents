@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15B42" minimumToolsVersion="Xcode 4.3">
+    <entity name="Photo" representedClassName="Photo" syncable="YES">
+        <attribute name="flickrURL" attributeType="Transformable" syncable="YES"/>
+        <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="pin" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pin" inverseName="photos" inverseEntity="Pin" syncable="YES"/>
+    </entity>
+    <entity name="Pin" representedClassName="Pin" syncable="YES">
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="details" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PinDetail" inverseName="pin" inverseEntity="PinDetail" syncable="YES"/>
+        <relationship name="photos" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Photo" inverseName="pin" inverseEntity="Photo" syncable="YES"/>
+    </entity>
+    <entity name="PinDetail" representedClassName="PinDetail" syncable="YES">
+        <attribute name="locality" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="pin" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pin" inverseName="details" inverseEntity="Pin" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Photo" positionX="-36" positionY="9" width="128" height="90"/>
+        <element name="Pin" positionX="-63" positionY="-18" width="128" height="105"/>
+        <element name="PinDetail" positionX="-45" positionY="27" width="128" height="75"/>
+    </elements>
+</model>
