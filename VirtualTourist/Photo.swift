@@ -38,6 +38,7 @@ public class Photo : NSManagedObject {
         if self.image == nil {
             _ = PhotoDownloadWorker(photo: self)
         }
+        print("out of super.init")
     }
     
     public override func prepareForDeletion() {

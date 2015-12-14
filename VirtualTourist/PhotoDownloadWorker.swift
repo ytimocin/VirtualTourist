@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import QuartzCore
+import CoreData
 
 public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
     
@@ -18,6 +19,7 @@ public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
     private var receivedBytes:Int = 0
     var photo:Photo
     var session:NSURLSession!
+    var sharedContext:NSManagedObjectContext!
     
     public override var hashValue: Int {
         get {
@@ -26,23 +28,30 @@ public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
     }
     
     init(photo:Photo) {
+        print("init 1")
         self.photo = photo
         super.init()
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        print("1")
         session = NSURLSession(configuration: configuration, delegate: self, delegateQueue: PhotoQueue.sharedInstance().downloadQueue)
-        
+        print("2")
         PhotoQueue.sharedInstance().downloadsInProgress[self.photo.description.hashValue] = self
-        
+        print("3")
         objc_sync_enter(PhotoQueue.sharedInstance().downloadWorkers)
+        print("4")
         PhotoQueue.sharedInstance().downloadWorkers.insert(self)
+        print("5")
         objc_sync_exit(PhotoQueue.sharedInstance().downloadWorkers)
-        
+        print("6")
         if PhotoQueue.sharedInstance().downloadWorkers.count <= PhotoQueue.sharedInstance().downloadQueue.maxConcurrentOperationCount {
+            print("7")
             PhotoQueue.sharedInstance().downloadQueue.addOperation(self)
         }
+        print("init 2")
     }
     
     public override func main() {
+        print("main called")
         self.download()
     }
     
@@ -136,5 +145,6 @@ public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
 }
 
 public func ==(lhs:PhotoDownloadWorker, rhs:PhotoDownloadWorker) -> Bool {
+    print("lhs...swift")
     return lhs.photo.flickrURL.path! == rhs.photo.flickrURL.path!
 }

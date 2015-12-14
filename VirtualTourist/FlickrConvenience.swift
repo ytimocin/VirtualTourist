@@ -30,23 +30,34 @@ extension FlickrClient {
                     }
                 }
                 
-                if let pin = self.sharedModelContext.objectWithID(annotation.objectID) as? Pin {
+                var pin: Pin!
+                
+                self.sharedModelContext.performBlockAndWait({ () -> Void in
+                    pin = self.sharedModelContext.objectWithID(annotation.objectID) as? Pin
+                })
+                
                     
-                    photoURLs.map({ Photo(pin: pin, imageURL: $0, context: self.sharedModelContext)})
+                if pin != nil {
+                    
+                    self.sharedModelContext.performBlockAndWait({ () -> Void in
+                        photoURLs.map({ Photo(pin: pin, imageURL: $0, context: self.sharedModelContext)})
+                    })
                     
                     NSNotificationCenter.defaultCenter().addObserver(self, selector: "addPhotosFromFlickr:", name: NSManagedObjectContextDidSaveNotification, object: self.sharedModelContext)
                     
                     saveContext(self.sharedModelContext) { success in
                         dispatch_async(dispatch_get_main_queue()) {
-                            delegate?.didFinishSearchingPinPhotos(true, pin: annotation, photos: photos, errorString: nil)
+                            delegate?.didFinishSearchingPinPhotos(true, pin: annotation, photos: photos, errorString: nil, context: self.sharedModelContext)
                         }
                     }
                 }
+
             } else {
-                delegate?.didFinishSearchingPinPhotos(false, pin: annotation, photos: nil, errorString: errorString)
+                delegate?.didFinishSearchingPinPhotos(false, pin: annotation, photos: nil, errorString: errorString, context: self.sharedModelContext)
             }
         }
     }
+    
     
     public func addPhotosFromFlickr(notification:NSNotification) {
         

@@ -90,6 +90,8 @@ public struct CoreDataModel: CustomStringConvertible {
 public func saveContext(context: NSManagedObjectContext, completion: (ContextSaveResult) -> Void) {
     if !context.hasChanges {
         completion((true, nil))
+        
+        print("out saveContext")
         return
     }
     

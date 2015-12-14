@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import CoreData
 
 public protocol FlickrDelegate {
     
-    func didFinishSearchingPinPhotos(success: Bool, pin: Pin, photos: [Photo]?, errorString: String?)
+    func didFinishSearchingPinPhotos(success: Bool, pin: Pin, photos: [Photo]?, errorString: String?, context: NSManagedObjectContext)
 }

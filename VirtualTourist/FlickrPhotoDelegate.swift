@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 public class FlickrPhotoDelegate: FlickrDelegate {
     
@@ -20,10 +21,10 @@ public class FlickrPhotoDelegate: FlickrDelegate {
     var pinsBeingProcessed:Set<Pin> = Set()
     var delegates:[Pin:FlickrDelegate] = [Pin:FlickrDelegate]()
     
-    public func didFinishSearchingPinPhotos(success: Bool, pin: Pin, photos: [Photo]?, errorString: String?) {
+    public func didFinishSearchingPinPhotos(success: Bool, pin: Pin, photos: [Photo]?, errorString: String?, context: NSManagedObjectContext) {
         self.pinsBeingProcessed.remove(pin)
         if let delegate = delegates[pin] {
-            delegate.didFinishSearchingPinPhotos(success, pin: pin, photos: photos, errorString: errorString)
+            delegate.didFinishSearchingPinPhotos(success, pin: pin, photos: photos, errorString: errorString, context: context)
         }
         self.delegates.removeValueForKey(pin)
     }

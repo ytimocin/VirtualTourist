@@ -26,14 +26,14 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
     
     var shouldFetch:Bool = false
     var activityView:VTActivityViewController?
-    var recognizer:UILongPressGestureRecognizer!
+    var recognizer:UITapGestureRecognizer!
     
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.recognizer = UILongPressGestureRecognizer(target: self, action: "handleLongPress:")
+        self.recognizer = UITapGestureRecognizer(target: self, action: "tapGesture:")
         self.collectionView.addGestureRecognizer(self.recognizer)
         
         noPhotosLabel.hidden = true
@@ -50,6 +50,7 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
             if self.annotation.pin!.isDownloading() {
                 for next in annotation.pin!.photos {
                     if let downloadWorker = PhotoQueue.sharedInstance().downloadsInProgress[next.description.hashValue] as? PhotoDownloadWorker {
+                        print("TravelLocationsGallery...swift")
                         downloadWorker.imageLoadDelegate.append(self)
                     }
                 }
@@ -87,7 +88,7 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
     
     //MARK: - Controller
     
-    func handleLongPress(recognizer:UILongPressGestureRecognizer) {
+    func tapGesture(recognizer:UILongPressGestureRecognizer) {
         if (recognizer.state != UIGestureRecognizerState.Ended) {
             return
         }
@@ -114,13 +115,15 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
         return layout
     }
     
-    func didFinishSearchingPinPhotos(success: Bool, pin: Pin, photos: [Photo]?, errorString:String?) {
+    func didFinishSearchingPinPhotos(success: Bool, pin: Pin, photos: [Photo]?, errorString:String?, context: NSManagedObjectContext) {
         for next in annotation.pin!.photos {
             if let downloadWorker = PhotoQueue.sharedInstance().downloadsInProgress[next.description.hashValue] as? PhotoDownloadWorker {
+                print("TravelLocationsGallery...swift")
                 downloadWorker.imageLoadDelegate.append(self)
             }
         }
-        dispatch_async(dispatch_get_main_queue()) {
+        
+        context.performBlockAndWait { () -> Void in
             let noPhotos = self.annotation.pin!.photos.count == 0
             self.noPhotosLabel.hidden = !noPhotos
             self.activityView?.closeView()
@@ -141,6 +144,28 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
             }
         }
         
+        /*
+        dispatch_async(dispatch_get_main_queue()) {
+            let noPhotos = self.annotation.pin!.photos.count == 0
+            self.noPhotosLabel.hidden = !noPhotos
+            self.activityView?.closeView()
+            self.activityView = nil
+            self.collectionView.hidden = false
+            if (self.shouldFetch) {
+                self.shouldFetch = false
+                self.performFetch()
+            }
+            
+            self.collectionView.reloadData()
+            self.collectionView.layoutIfNeeded()
+            self.view.layoutIfNeeded()
+            if (photos?.count > 0) {
+                UIView.animateWithDuration(1.0, animations: {
+                    self.view.layoutIfNeeded()
+                })
+            }
+        }
+        */
     }
     
     func updateToolBar(enabled:Bool) {
@@ -262,21 +287,20 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PhotoCell
         
-        
+        /*
         if selectedPhotoIndexes.contains(indexPath) {
             selectedPhotoIndexes.removeAtIndex(selectedPhotoIndexes.indexOf(indexPath)!)
         } else {
             selectedPhotoIndexes.append(indexPath)
         }
-        
-        /*
-        DELETE IF ABOVE OK
-        if let index = selectedIndexes.indexOf(indexPath) {
-            selectedIndexes.removeAtIndex(index)
-        } else {
-            selectedIndexes.append(indexPath)
-        }
         */
+        
+        if let index = selectedPhotoIndexes.indexOf(indexPath) {
+            selectedPhotoIndexes.removeAtIndex(index)
+        } else {
+            selectedPhotoIndexes.append(indexPath)
+        }
+        
         self.configureCell(cell, atIndexPath: indexPath)
     }
     
@@ -318,4 +342,3 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
             }, completion: nil)
     }
 }
-

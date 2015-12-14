@@ -78,6 +78,7 @@ class TravelLocationsMapViewController: UIViewController, NSFetchedResultsContro
         if segue.identifier == "TravelLocationsGalleryViewController" {
             if let viewController = segue.destinationViewController as? TravelLocationsGalleryViewController {
                 viewController.annotation = self.selectedPin
+                self.selectedPin = nil
             }
         }
     }
