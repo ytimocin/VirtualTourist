@@ -23,6 +23,7 @@ public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
     
     public override var hashValue: Int {
         get {
+            print("PhotoDownloadWorker hashValue called")
             return self.photo.flickrURL.path!.hashValue
         }
     }
@@ -56,6 +57,7 @@ public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
     }
     
     public func isDownloading() -> Bool {
+        print("isDownloading")
         return PhotoQueue.sharedInstance().downloadsInProgress.indexForKey(self.photo.description.hashValue) != nil
     }
     
@@ -92,15 +94,18 @@ public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
         self.receivedBytes = 0
         self.imageData = nil
         self.session = nil
+        print("cancel")
         PhotoQueue
             .sharedInstance().downloadsInProgress.removeValueForKey(self.photo.description.hashValue)
     }
     
     private func download() {
-        let request = NSURLRequest(URL: self.photo.flickrURL)
-        let dataTask = self.session.dataTaskWithRequest(request)
-        
-        dataTask.resume()
+        dispatch_async(dispatch_get_main_queue()) {
+            let request = NSURLRequest(URL: self.photo.flickrURL)
+            let dataTask = self.session.dataTaskWithRequest(request)
+            
+            dataTask.resume()
+        }
     }
     
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
@@ -127,20 +132,24 @@ public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
     }
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-        PhotoQueue.sharedInstance().downloadsInProgress.removeValueForKey(self.photo.description.hashValue)
-        if let error = error {
-            print("Error downloading photo \(error)")
+        print("URLSession")
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            PhotoQueue.sharedInstance().downloadsInProgress.removeValueForKey(self.photo.description.hashValue)
+            if let error = error {
+                print("Error downloading photo \(error)")
+            }
+            if let imageData = self.imageData {
+                let image = UIImage(data: imageData)
+                self.photo.image = image
+            }
+            self.fireLoadFinish()
+            self.imageLoadDelegate.removeAll(keepCapacity: false)
+            self.totalBytes = 0
+            self.receivedBytes = 0
+            self.imageData = nil
+            self.session = nil
         }
-        if let imageData = self.imageData {
-            let image = UIImage(data: imageData)
-            self.photo.image = image
-        }
-        self.fireLoadFinish()
-        self.imageLoadDelegate.removeAll(keepCapacity: false)
-        self.totalBytes = 0
-        self.receivedBytes = 0
-        self.imageData = nil
-        self.session = nil
     }
 }
 

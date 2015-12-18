@@ -88,14 +88,16 @@ public struct CoreDataModel: CustomStringConvertible {
 }
 
 public func saveContext(context: NSManagedObjectContext, completion: (ContextSaveResult) -> Void) {
-    if !context.hasChanges {
-        completion((true, nil))
+    context.performBlockAndWait({ () -> Void in
         
-        print("out saveContext")
-        return
-    }
-    
-    context.performBlock { () -> Void in
+        print("inside saveContext in CoreDataModel.swift")
+        
+        if !context.hasChanges {
+            completion((true, nil))
+            
+            print("out saveContext")
+            return
+        }
         
         do {
             try context.save()
@@ -104,9 +106,7 @@ public func saveContext(context: NSManagedObjectContext, completion: (ContextSav
             print("*** ERROR: [\(__LINE__)] \(__FUNCTION__) Could not save managed object context: \(error)")
             completion((true, error as NSError))
         }
-        
-        
-    }
+    })
 }
 
 // MARK: Private

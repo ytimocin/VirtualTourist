@@ -20,6 +20,7 @@ public class Photo : NSManagedObject {
     
     override public var description:String {
         get {
+            print("description called")
             return self.flickrURL.path!
         }
     }
@@ -51,7 +52,9 @@ public class Photo : NSManagedObject {
         }
         
         set {
-            ImageCache.sharedInstance().storeImage(newValue, withIdentifier: "\(self.imagePath)")
+            dispatch_async(dispatch_get_main_queue()) {
+                ImageCache.sharedInstance().storeImage(newValue, withIdentifier: "\(self.imagePath)")
+            }
         }
     }
     

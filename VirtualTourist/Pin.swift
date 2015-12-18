@@ -42,6 +42,8 @@ public class Pin : NSManagedObject {
     }
     
     func isDownloading() -> Bool {
+        print("isDownloading in Pin")
+        
         var result = false
         
         for next in self.photos {
