@@ -97,7 +97,10 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
         if let indexPath = self.collectionView.indexPathForItemAtPoint(point) {
             if let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as? PhotoCell {
                 let photo = cell.photo
-                photo.pin = nil
+                print("photo.imagePath \(photo.imagePath)")
+                print("photo.flickrURL \(photo.flickrURL.description)")
+                print("photo.pin \(photo.pin?.description)")
+                //photo.pin = nil
                 self.sharedContext.deleteObject(photo)
                 CoreDataStackManager.sharedInstance().saveContext()
             }
@@ -175,13 +178,12 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
     @IBAction func newCollection(sender: UIBarButtonItem) {
         for photo in self.annotation.pin!.photos {
             photo.pin = nil
-            //clean images from disk
             photo.image = nil
             self.sharedContext.deleteObject(photo)
+            CoreDataStackManager.sharedInstance().saveContext()
         }
         self.searchPhotosForLocation()
-        CoreDataStackManager.sharedInstance().saveContext()
-        
+        //CoreDataStackManager.sharedInstance().saveContext()
     }
     
     func searchPhotosForLocation() {

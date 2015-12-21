@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-public typealias ChildManagedObjectContext = NSManagedObjectContext
+//public typealias ChildManagedObjectContext = NSManagedObjectContext
 
 public final class CoreDataStack:CustomStringConvertible {
     
@@ -32,13 +32,15 @@ public final class CoreDataStack:CustomStringConvertible {
         self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
     }
     
+    /*
     public func childManagedObjectContext(concurrencyType:NSManagedObjectContextConcurrencyType = .MainQueueConcurrencyType, mergePolicyType:NSMergePolicyType = .MergeByPropertyObjectTrumpMergePolicyType) -> ChildManagedObjectContext {
         
         let childContext = NSManagedObjectContext(concurrencyType: concurrencyType)
-        childContext.parentContext = managedObjectContext
+        //childContext.parentContext = managedObjectContext
         childContext.mergePolicy = NSMergePolicy(mergeType: mergePolicyType)
         return childContext
     }
+    */
     
     public var description: String {
         get {

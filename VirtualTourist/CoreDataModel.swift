@@ -62,24 +62,6 @@ public struct CoreDataModel: CustomStringConvertible {
         self.storeDirectoryURL = storeDirectoryURL
     }
     
-    public func removeExistingModelStore() -> (success:Bool, error:NSError?) {
-        let fileManager = NSFileManager.defaultManager()
-        
-        if let storePath = storeURL.path {
-            if fileManager.fileExistsAtPath(storePath) {
-                do {
-                    try fileManager.removeItemAtURL(storeURL)
-                    return (true, nil)
-                } catch {
-                    print("*** \(String(CoreDataModel.self)) ERROR: [\(__LINE__)] \(__FUNCTION__) Could not remove model store at url: \(error)")
-                    return (false, error as NSError)
-                }
-            }
-        }
-        
-        return (false, nil)
-    }
-    
     public var description:String {
         get {
             return "<\(String(CoreDataModel.self)): name=\(name), needsMigration=\(modelStoreNeedsMigration), databaseFileName=\(databaseFileName), modelURL=\(modelURL), storeURL=\(storeURL)>"
