@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B73AA51A1C2B4EC900C5B0AC /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73AA5191C2B4EC900C5B0AC /* CoreDataManager.swift */; };
 		B796F3101C12F1BB00799163 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B796F30F1C12F1BB00799163 /* AppDelegate.swift */; };
 		B796F3121C12F1BB00799163 /* TravelLocationsMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B796F3111C12F1BB00799163 /* TravelLocationsMapViewController.swift */; };
 		B796F3151C12F1BB00799163 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B796F3131C12F1BB00799163 /* Main.storyboard */; };
@@ -55,6 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B73AA5191C2B4EC900C5B0AC /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		B796F30C1C12F1BB00799163 /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B796F30F1C12F1BB00799163 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B796F3111C12F1BB00799163 /* TravelLocationsMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelLocationsMapViewController.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				B796F30F1C12F1BB00799163 /* AppDelegate.swift */,
+				B73AA5191C2B4EC900C5B0AC /* CoreDataManager.swift */,
 				B7CD867F1C13C09100BDAA7D /* CoreDataModel.swift */,
 				B7CD86811C13C0C200BDAA7D /* CoreDataStack.swift */,
 				B796F3421C12F41D00799163 /* CoreDataStackManager.swift */,
@@ -381,6 +384,7 @@
 				B7CD86911C14281100BDAA7D /* VTActivityViewController.swift in Sources */,
 				B7CD86671C13A44500BDAA7D /* PhotoQueue.swift in Sources */,
 				B796F33F1C12F38D00799163 /* Pin.swift in Sources */,
+				B73AA51A1C2B4EC900C5B0AC /* CoreDataManager.swift in Sources */,
 				B7CD86771C13A7AE00BDAA7D /* FlickrDelegate.swift in Sources */,
 				B7CD86711C13A70A00BDAA7D /* FlickrClient.swift in Sources */,
 				B796F3121C12F1BB00799163 /* TravelLocationsMapViewController.swift in Sources */,

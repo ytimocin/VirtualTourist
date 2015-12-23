@@ -38,7 +38,8 @@ public class FlickrClient: NSObject, HTTPClientProtocol {
     }
     
     lazy var sharedModelContext:NSManagedObjectContext = {
-        return CoreDataStackManager.sharedInstance().dataStack.managedObjectContext//childManagedObjectContext(NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)//(NSManagedObjectContextConcurrencyType.PrivateQueueConcurrencyType)
+        return CoreDataManager.sharedInstance().managedObjectContext!
+        //.sharedInstance().dataStack.managedObjectContext//childManagedObjectContext(NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)//(NSManagedObjectContextConcurrencyType.PrivateQueueConcurrencyType)
     }()
     
     // MARK: - Shared Instance

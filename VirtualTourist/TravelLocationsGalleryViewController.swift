@@ -88,7 +88,7 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
     
     //MARK: - Controller
     
-    func tapGesture(recognizer:UILongPressGestureRecognizer) {
+    func tapGesture(recognizer:UITapGestureRecognizer) {
         if (recognizer.state != UIGestureRecognizerState.Ended) {
             return
         }
@@ -96,13 +96,16 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
         let point = recognizer.locationInView(self.collectionView)
         if let indexPath = self.collectionView.indexPathForItemAtPoint(point) {
             if let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as? PhotoCell {
-                let photo = cell.photo
-                print("photo.imagePath \(photo.imagePath)")
-                print("photo.flickrURL \(photo.flickrURL.description)")
-                print("photo.pin \(photo.pin?.description)")
-                //photo.pin = nil
-                self.sharedContext.deleteObject(photo)
-                CoreDataStackManager.sharedInstance().saveContext()
+                if let photo = cell.photo{
+                    print("photo.imagePath \(photo.imagePath)")
+                    print("photo.flickrURL \(photo.flickrURL.description)")
+                    print("photo.pin \(photo.pin?.description)")
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.sharedContext.deleteObject(photo)
+                        print("*** tapGesture")
+                        CoreDataManager.sharedInstance().saveContext()
+                    }
+                }
             }
         }
     }
@@ -126,7 +129,7 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
             }
         }
         
-        context.performBlockAndWait { () -> Void in
+        //context.performBlockAndWait { () -> Void in
             let noPhotos = self.annotation.pin!.photos.count == 0
             self.noPhotosLabel.hidden = !noPhotos
             self.activityView?.closeView()
@@ -145,7 +148,7 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
                     self.view.layoutIfNeeded()
                 })
             }
-        }
+        //}
         
         /*
         dispatch_async(dispatch_get_main_queue()) {
@@ -177,13 +180,15 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
     
     @IBAction func newCollection(sender: UIBarButtonItem) {
         for photo in self.annotation.pin!.photos {
-            photo.pin = nil
-            photo.image = nil
-            self.sharedContext.deleteObject(photo)
-            CoreDataStackManager.sharedInstance().saveContext()
+            dispatch_async(dispatch_get_main_queue()) {
+                //photo.pin = nil
+                //photo.image = nil
+                self.sharedContext.deleteObject(photo)
+            }
         }
         self.searchPhotosForLocation()
-        //CoreDataStackManager.sharedInstance().saveContext()
+        print("*** newCollection")
+        CoreDataManager.sharedInstance().saveContext()
     }
     
     func searchPhotosForLocation() {
@@ -232,7 +237,7 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
     }()
     
     lazy var sharedContext:NSManagedObjectContext = {
-        return CoreDataStackManager.sharedInstance().dataStack.managedObjectContext
+        return CoreDataManager.sharedInstance().managedObjectContext!
     }()
     
     private func performFetch() {

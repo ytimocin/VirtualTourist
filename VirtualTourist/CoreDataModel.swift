@@ -6,6 +6,8 @@
 //  Copyright © 2015 BaseTech. All rights reserved.
 //
 
+// NOT BEING USED
+
 import Foundation
 import CoreData
 
@@ -70,7 +72,7 @@ public struct CoreDataModel: CustomStringConvertible {
 }
 
 public func saveContext(context: NSManagedObjectContext, completion: (ContextSaveResult) -> Void) {
-    context.performBlockAndWait({ () -> Void in
+    //context.performBlockAndWait({ () -> Void in
         
         print("inside saveContext in CoreDataModel.swift")
         
@@ -88,7 +90,7 @@ public func saveContext(context: NSManagedObjectContext, completion: (ContextSav
             print("*** ERROR: [\(__LINE__)] \(__FUNCTION__) Could not save managed object context: \(error)")
             completion((true, error as NSError))
         }
-    })
+    //})
 }
 
 // MARK: Private

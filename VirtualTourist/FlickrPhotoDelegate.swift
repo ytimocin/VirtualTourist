@@ -30,6 +30,7 @@ public class FlickrPhotoDelegate: FlickrDelegate {
     }
     
     public func getPhotosOfThisPin(pin: Pin) {
+        print("getPhotosOfThisPin")
         self.pinsBeingProcessed.insert(pin)
         FlickrClient.sharedInstance().getPhotosFromFlickrSearch(pin, delegate: self)
     }

@@ -92,7 +92,7 @@ class TravelLocationsMapViewController: UIViewController, NSFetchedResultsContro
     }()
     
     var sharedContext:NSManagedObjectContext {
-        return CoreDataStackManager.sharedInstance().dataStack.managedObjectContext
+        return CoreDataManager.sharedInstance().managedObjectContext!
     }
     
     //MARK: - NSFetchedResultsControllerDelegate
@@ -134,7 +134,8 @@ class TravelLocationsMapViewController: UIViewController, NSFetchedResultsContro
         dispatch_async(dispatch_get_main_queue()) {
             
             let pin = Pin(latitude: self.currentPinAnnotation!.coordinate.latitude, longitude: self.currentPinAnnotation!.coordinate.longitude, context: self.sharedContext)
-            CoreDataStackManager.sharedInstance().saveContext()
+            print("*** createPinDetail")
+            CoreDataManager.sharedInstance().saveContext()
             self.currentPinAnnotation!.pin = pin
             FlickrPhotoDelegate.sharedInstance().getPhotosOfThisPin(pin)
             let newPin = CLLocation(latitude: self.currentPinAnnotation!.coordinate.latitude, longitude: self.currentPinAnnotation!.coordinate.longitude)
@@ -147,7 +148,8 @@ class TravelLocationsMapViewController: UIViewController, NSFetchedResultsContro
                         if pm!.locality != nil {
                             dispatch_async(dispatch_get_main_queue()) {
                                 PinDetail(pin: pin, locality: pm!.locality!, context: self.sharedContext)
-                                CoreDataStackManager.sharedInstance().saveContext()
+                                print("*** createPinDetail")
+                                CoreDataManager.sharedInstance().saveContext()
                             }
                         } else {
                             print("createPinDetail() error : location locality is nil")
@@ -237,7 +239,8 @@ extension TravelLocationsMapViewController : MKMapViewDelegate {
                 if !annotation.pin!.isDownloading() {
                     dispatch_async(dispatch_get_main_queue()) {
                         self.sharedContext.deleteObject(annotation.pin!)
-                        CoreDataStackManager.sharedInstance().saveContext()
+                        print("*** mapView")
+                        CoreDataManager.sharedInstance().saveContext()
                     }
                 }
             }
