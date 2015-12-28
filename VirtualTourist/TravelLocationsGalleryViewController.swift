@@ -50,7 +50,6 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
             if self.annotation.pin!.isDownloading() {
                 for next in annotation.pin!.photos {
                     if let downloadWorker = PhotoQueue.sharedInstance().downloadsInProgress[next.description.hashValue] as? PhotoDownloadWorker {
-                        print("TravelLocationsGallery...swift")
                         downloadWorker.imageLoadDelegate.append(self)
                     }
                 }
@@ -96,18 +95,16 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
         let point = recognizer.locationInView(self.collectionView)
         if let indexPath = self.collectionView.indexPathForItemAtPoint(point) {
             if let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as? PhotoCell {
-                if let photo = cell.photo{
-                    print("photo.imagePath \(photo.imagePath)")
-                    print("photo.flickrURL \(photo.flickrURL.description)")
-                    print("photo.pin \(photo.pin?.description)")
+                if let photo = cell.photo {
                     dispatch_async(dispatch_get_main_queue()) {
+                        photo.pin = nil
+                        photo.image = nil
                         self.sharedContext.deleteObject(photo)
-                        print("*** tapGesture")
-                        CoreDataManager.sharedInstance().saveContext()
                     }
                 }
             }
         }
+        CoreDataManager.sharedInstance().saveContext()
     }
     
     func getCollectionLayout() -> UICollectionViewFlowLayout {
@@ -124,33 +121,10 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
     func didFinishSearchingPinPhotos(success: Bool, pin: Pin, photos: [Photo]?, errorString:String?, context: NSManagedObjectContext) {
         for next in annotation.pin!.photos {
             if let downloadWorker = PhotoQueue.sharedInstance().downloadsInProgress[next.description.hashValue] as? PhotoDownloadWorker {
-                print("TravelLocationsGallery...swift")
                 downloadWorker.imageLoadDelegate.append(self)
             }
         }
         
-        //context.performBlockAndWait { () -> Void in
-            let noPhotos = self.annotation.pin!.photos.count == 0
-            self.noPhotosLabel.hidden = !noPhotos
-            self.activityView?.closeView()
-            self.activityView = nil
-            self.collectionView.hidden = false
-            if (self.shouldFetch) {
-                self.shouldFetch = false
-                self.performFetch()
-            }
-            
-            self.collectionView.reloadData()
-            self.collectionView.layoutIfNeeded()
-            self.view.layoutIfNeeded()
-            if (photos?.count > 0) {
-                UIView.animateWithDuration(1.0, animations: {
-                    self.view.layoutIfNeeded()
-                })
-            }
-        //}
-        
-        /*
         dispatch_async(dispatch_get_main_queue()) {
             let noPhotos = self.annotation.pin!.photos.count == 0
             self.noPhotosLabel.hidden = !noPhotos
@@ -171,7 +145,6 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
                 })
             }
         }
-        */
     }
     
     func updateToolBar(enabled:Bool) {
@@ -181,13 +154,12 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
     @IBAction func newCollection(sender: UIBarButtonItem) {
         for photo in self.annotation.pin!.photos {
             dispatch_async(dispatch_get_main_queue()) {
-                //photo.pin = nil
-                //photo.image = nil
+                photo.pin = nil
+                photo.image = nil
                 self.sharedContext.deleteObject(photo)
             }
         }
         self.searchPhotosForLocation()
-        print("*** newCollection")
         CoreDataManager.sharedInstance().saveContext()
     }
     
@@ -248,7 +220,6 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
             try self.fetchedResultsViewController.performFetch()
         } catch let performFetchError as NSError {
             error = performFetchError
-            print("Error performing initial fetch: \(error.debugDescription)")
         }
         
         let sectionNumber = self.fetchedResultsViewController.sections!.first!
@@ -289,26 +260,6 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
         self.configureCell(cell, atIndexPath: indexPath)
         
         return cell
-    }
-    
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PhotoCell
-        
-        /*
-        if selectedPhotoIndexes.contains(indexPath) {
-            selectedPhotoIndexes.removeAtIndex(selectedPhotoIndexes.indexOf(indexPath)!)
-        } else {
-            selectedPhotoIndexes.append(indexPath)
-        }
-        */
-        
-        if let index = selectedPhotoIndexes.indexOf(indexPath) {
-            selectedPhotoIndexes.removeAtIndex(index)
-        } else {
-            selectedPhotoIndexes.append(indexPath)
-        }
-        
-        self.configureCell(cell, atIndexPath: indexPath)
     }
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {

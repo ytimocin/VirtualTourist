@@ -14,7 +14,6 @@ private let MAX_PHOTOS = 39
 extension FlickrClient {
     
     public func getPhotosFromFlickrSearch(annotation:Pin, delegate:FlickrDelegate?) {
-        print("getPhotosFromFlickrSearch")
         self.getImageFromFlickrSearch(annotation) { success, result, errorString in
             if success {
                 let photos = [Photo]()
@@ -33,29 +32,20 @@ extension FlickrClient {
                 
                 var pin: Pin!
                 
-                //self.sharedModelContext.performBlockAndWait({ () -> Void in
-                    //pin = self.sharedModelContext.objectWithID(annotation.objectID) as? Pin
-                //})
-                
                 dispatch_async(dispatch_get_main_queue()) {
                     pin = self.sharedModelContext.objectWithID(annotation.objectID) as? Pin
                     
                     if pin != nil {
                         
-                        //self.sharedModelContext.performBlockAndWait({ () -> Void in
                         photoURLs.map({ Photo(pin: pin, imageURL: $0, context: self.sharedModelContext)})
-                        //})
                         
-                        print("addPhotosFromFlickr1")
                         NSNotificationCenter.defaultCenter().addObserver(self, selector: "addPhotosFromFlickr:", name: NSManagedObjectContextDidSaveNotification, object: self.sharedModelContext)
                         
-                        
-                        print("*** FlickrConvenience")
-                        saveContext(self.sharedModelContext) { success in
+                        //saveContext(self.sharedModelContext) { success in
                             dispatch_async(dispatch_get_main_queue()) {
                                 delegate?.didFinishSearchingPinPhotos(true, pin: annotation, photos: photos, errorString: nil, context: self.sharedModelContext)
                             }
-                        }
+                        //}
                     }
                 }
 
@@ -67,17 +57,9 @@ extension FlickrClient {
     
     
     public func addPhotosFromFlickr(notification:NSNotification) {
-        
         let mainContext:NSManagedObjectContext = CoreDataManager.sharedInstance().managedObjectContext!
-        
-        print("addPhotosFromFlickr2")
-        
-        //dispatch_async(dispatch_get_main_queue()) {
-            mainContext.mergeChangesFromContextDidSaveNotification(notification)
-            print("*** addPhotosFromFlickr")
-            CoreDataManager.sharedInstance().saveContext()
-        //}
-        
+        mainContext.mergeChangesFromContextDidSaveNotification(notification)
+        CoreDataManager.sharedInstance().saveContext()
     }
     
     public func getImageFromFlickrSearch(annotation:Pin, completionHandler:(success:Bool, result:[[String: AnyObject]]?, errorString:String?) -> Void) {

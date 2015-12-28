@@ -134,7 +134,6 @@ class TravelLocationsMapViewController: UIViewController, NSFetchedResultsContro
         dispatch_async(dispatch_get_main_queue()) {
             
             let pin = Pin(latitude: self.currentPinAnnotation!.coordinate.latitude, longitude: self.currentPinAnnotation!.coordinate.longitude, context: self.sharedContext)
-            print("*** createPinDetail")
             CoreDataManager.sharedInstance().saveContext()
             self.currentPinAnnotation!.pin = pin
             FlickrPhotoDelegate.sharedInstance().getPhotosOfThisPin(pin)
@@ -148,7 +147,6 @@ class TravelLocationsMapViewController: UIViewController, NSFetchedResultsContro
                         if pm!.locality != nil {
                             dispatch_async(dispatch_get_main_queue()) {
                                 PinDetail(pin: pin, locality: pm!.locality!, context: self.sharedContext)
-                                print("*** createPinDetail")
                                 CoreDataManager.sharedInstance().saveContext()
                             }
                         } else {
@@ -235,11 +233,9 @@ extension TravelLocationsMapViewController : MKMapViewDelegate {
         if self.editMode {
             if let pinAnnotation = view as? MKPinAnnotationView {
                 let annotation = pinAnnotation.annotation as! MapPinAnnotation
-                //do not allow delete while fetching photos
                 if !annotation.pin!.isDownloading() {
                     dispatch_async(dispatch_get_main_queue()) {
                         self.sharedContext.deleteObject(annotation.pin!)
-                        print("*** mapView")
                         CoreDataManager.sharedInstance().saveContext()
                     }
                 }

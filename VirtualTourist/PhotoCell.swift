@@ -20,7 +20,6 @@ class PhotoCell: UICollectionViewCell, ImageLoadDelegate {
         super.layoutSubviews()
         if self.photo.image == nil {
             if let downloadWorker = PhotoQueue.sharedInstance().downloadsInProgress[self.photo.description.hashValue] as? PhotoDownloadWorker {
-                print("photoCell.swift")
                 downloadWorker.imageLoadDelegate.append(self)
                 self.configureLoadingCell()
             } else {

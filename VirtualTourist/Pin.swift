@@ -42,13 +42,10 @@ public class Pin : NSManagedObject {
     }
     
     func isDownloading() -> Bool {
-        print("isDownloading in Pin")
-        
         var result = false
         
         for next in self.photos {
             if let downloadWorker = PhotoQueue.sharedInstance().downloadsInProgress[next.description.hashValue] as? PhotoDownloadWorker {
-                print("Pin.swift")
                 if downloadWorker.isDownloading() {
                     result = true
                     break

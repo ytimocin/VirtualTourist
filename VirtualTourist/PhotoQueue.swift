@@ -23,7 +23,6 @@ class PhotoQueue: NSObject {
     var downloadWorkers:Set<PhotoDownloadWorker> = Set()
     
     override init() {
-        print("PhotoQueue.swift")
         downloadQueue = NSOperationQueue()
         downloadQueue.name = "Download Queue"
         downloadQueue.maxConcurrentOperationCount = 6

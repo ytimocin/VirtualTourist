@@ -20,7 +20,6 @@ public class Photo : NSManagedObject {
     
     override public var description:String {
         get {
-            print("description called")
             return self.flickrURL.path!
         }
     }
@@ -39,7 +38,6 @@ public class Photo : NSManagedObject {
         if self.image == nil {
             _ = PhotoDownloadWorker(photo: self)
         }
-        print("out of super.init")
     }
     
     public override func prepareForDeletion() {
