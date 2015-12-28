@@ -36,7 +36,14 @@ public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
         objc_sync_enter(PhotoQueue.sharedInstance().downloadWorkers)
         PhotoQueue.sharedInstance().downloadWorkers.insert(self)
         objc_sync_exit(PhotoQueue.sharedInstance().downloadWorkers)
+        
+        /*
         if PhotoQueue.sharedInstance().downloadWorkers.count <= PhotoQueue.sharedInstance().downloadQueue.maxConcurrentOperationCount {
+            PhotoQueue.sharedInstance().downloadQueue.addOperation(self)
+        }
+        */
+        
+        if(!self.executing && !self.finished && !PhotoQueue.sharedInstance().downloadQueue.operations.contains(self)){
             PhotoQueue.sharedInstance().downloadQueue.addOperation(self)
         }
     }
@@ -62,10 +69,19 @@ public class PhotoDownloadWorker:NSOperation, NSURLSessionDataDelegate {
         objc_sync_enter( PhotoQueue.sharedInstance().downloadWorkers)
         PhotoQueue.sharedInstance().downloadWorkers.remove(self)
         let pendingWorkers = PhotoQueue.sharedInstance().downloadWorkers.filter { !$0.finished && !$0.executing}
+        
+        /*
         if let worker = pendingWorkers.first {
             PhotoQueue.sharedInstance().downloadWorkers.insert(worker)
             PhotoQueue.sharedInstance().downloadQueue.addOperation(worker)
         }
+        */
+        
+        if let worker = pendingWorkers.first where !PhotoQueue.sharedInstance().downloadQueue.operations.contains(worker){
+            PhotoQueue.sharedInstance().downloadWorkers.insert(worker)
+            PhotoQueue.sharedInstance().downloadQueue.addOperation(worker)
+        }
+        
         objc_sync_exit( PhotoQueue.sharedInstance().downloadWorkers)
         
         for next in imageLoadDelegate {

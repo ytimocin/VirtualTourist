@@ -100,11 +100,13 @@ class TravelLocationsGalleryViewController : UIViewController, UICollectionViewD
                         photo.pin = nil
                         photo.image = nil
                         self.sharedContext.deleteObject(photo)
+                        dispatch_async(dispatch_get_main_queue()) {
+                            CoreDataManager.sharedInstance().saveContext()
+                        }
                     }
                 }
             }
         }
-        CoreDataManager.sharedInstance().saveContext()
     }
     
     func getCollectionLayout() -> UICollectionViewFlowLayout {

@@ -119,6 +119,7 @@ class TravelLocationsMapViewController: UIViewController, NSFetchedResultsContro
                     if let pin:MapPinAnnotation = annotation as? MapPinAnnotation {
                         if pin.coordinate.latitude == location.latitude && pin.coordinate.longitude == location.longitude {
                             self.pins.removeAnnotation(pin)
+                            // remove photos of removed pin
                         }
                     }
                 }
@@ -235,6 +236,19 @@ extension TravelLocationsMapViewController : MKMapViewDelegate {
                 let annotation = pinAnnotation.annotation as! MapPinAnnotation
                 if !annotation.pin!.isDownloading() {
                     dispatch_async(dispatch_get_main_queue()) {
+                        // to remove photos
+                        // I disable this code because when I delete nearby
+                        // pins, there are images that intersects so they all
+                        // get deleted
+                        /*
+                        for photo in annotation.pin!.photos {
+                            dispatch_async(dispatch_get_main_queue()) {
+                                photo.pin = nil
+                                photo.image = nil
+                                self.sharedContext.deleteObject(photo)
+                            }
+                        }
+                        */
                         self.sharedContext.deleteObject(annotation.pin!)
                         CoreDataManager.sharedInstance().saveContext()
                     }

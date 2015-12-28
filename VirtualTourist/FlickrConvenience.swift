@@ -46,6 +46,7 @@ extension FlickrClient {
                                 delegate?.didFinishSearchingPinPhotos(true, pin: annotation, photos: photos, errorString: nil, context: self.sharedModelContext)
                             }
                         //}
+                        CoreDataManager.sharedInstance().saveContext()
                     }
                 }
 
